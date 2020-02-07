@@ -1,2 +1,2 @@
 # csvToJson
-Simple CSV to JSON converter
+Simple CSV -> JSON and JSON -> CSV converter.

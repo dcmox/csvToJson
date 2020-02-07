@@ -50,3 +50,18 @@ exports.csvToJson = function (csv) {
     }
     return result;
 };
+exports.jsonToCsv = function (json) {
+    var result = '';
+    var headers = json.reduce(function (acc, item) {
+        acc.push.apply(acc, Object.keys(item));
+        return acc;
+    }, []);
+    headers = headers.filter(function (h, i) { return headers.indexOf(h) === i; });
+    result = headers.map(function (h) { return "\"" + h + "\""; }).join() + '\n';
+    json.forEach(function (doc) {
+        var row = Array.from({ length: headers.length }, function () { return ''; });
+        Object.keys(doc).forEach(function (key) { return row[headers.indexOf(key)] = "\"" + doc[key].toString() + "\""; });
+        result += row.join() + '\n';
+    });
+    return result;
+};

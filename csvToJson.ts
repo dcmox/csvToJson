@@ -36,3 +36,25 @@ export const csvToJson = (csv: string) => {
 
     return result
 }
+
+interface IJsonDocument {
+    [key: string]: string | number | boolean | Date
+}
+
+export const jsonToCsv = (json: IJsonDocument[]) => {
+    let result: string = ''
+
+    let headers = json.reduce((acc: string[], item: any) => {
+        acc.push(...Object.keys(item))
+        return acc
+    }, [])
+    headers = headers.filter((h: string, i: number) => headers.indexOf(h) === i)
+    result = headers.map((h: string) => `"${h}"`).join() + '\n'
+    json.forEach((doc) => {
+        const row: string[] = Array.from({length: headers.length}, () => '')
+        Object.keys(doc).forEach((key: string) => row[headers.indexOf(key)] = `"${doc[key].toString()}"`)
+        result += row.join() + '\n'
+    })
+
+    return result
+}
