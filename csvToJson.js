@@ -27,11 +27,15 @@ exports.splitStringByCSVCommas = function (str, replaceEmptyColumnWithIndex) {
     if (!results) {
         return [];
     }
-    return results.map(function (column, index) {
-        return column === CSV_LINE_SEPARATOR ?
-            replaceEmptyColumnWithIndex ? index.toString() : null :
-            isNaN(Number(column)) ? column : Number(column);
-    }) || [];
+    return (results.map(function (column, index) {
+        return column === CSV_LINE_SEPARATOR
+            ? replaceEmptyColumnWithIndex
+                ? index.toString()
+                : null
+            : isNaN(Number(column))
+                ? column
+                : Number(column);
+    }) || []);
 };
 exports.mergeKVArrays = function (keys, values) {
     return keys.reduce(function (obj, key, index) {
@@ -40,12 +44,16 @@ exports.mergeKVArrays = function (keys, values) {
     }, {});
 };
 exports.csvToJson = function (csv) {
-    var csvData = csv.split('\n').filter(function (line) { return line; }); // remove empty lines
+    var csvData = csv
+        .split('\n')
+        .filter(function (line) { return line; }); // remove empty lines
     var csvHeaderRow = csvData.shift();
     var result = { csv: [] };
     if (csvHeaderRow) {
         var headers_1 = exports.splitStringByCSVCommas(csvHeaderRow, true);
-        csvData = csvData.map(function (row) { return exports.mergeKVArrays(headers_1, exports.splitStringByCSVCommas(row)); });
+        csvData = csvData.map(function (row) {
+            return exports.mergeKVArrays(headers_1, exports.splitStringByCSVCommas(row));
+        });
         result.csv = csvData;
     }
     return result;
@@ -60,8 +68,14 @@ exports.jsonToCsv = function (json) {
     result = headers.map(function (h) { return "\"" + h + "\""; }).join() + '\n';
     json.forEach(function (doc) {
         var row = Array.from({ length: headers.length }, function () { return ''; });
-        Object.keys(doc).forEach(function (key) { return row[headers.indexOf(key)] = "\"" + doc[key].toString() + "\""; });
+        Object.keys(doc).forEach(function (key) {
+            return (row[headers.indexOf(key)] = "\"" + doc[key].toString() + "\"");
+        });
         result += row.join() + '\n';
     });
     return result;
+};
+module.exports = {
+    csvToJson: exports.csvToJson,
+    jsonToCsv: exports.jsonToCsv
 };
